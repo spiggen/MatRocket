@@ -1,9 +1,10 @@
 # Creating and modelling rockets
 Author: Vilgot Lötberg, vilgotl@kth.se, 0725079097
 
-![](./Assets/mjollnir2.png)
 
-The below code can be found at: https://github.com/aesirkth/AESIR-Mjollnir-Simulations
+
+The below is documentation for the code found at: https://github.com/spiggen/MatRocket/tree/master
+
 
 <h2>Contents:</h2>
 
@@ -36,13 +37,13 @@ Creating a new rocket using this codebase requires a basic understanding of how,
 ```
 >> setup
 
->> my_rocket = mjollnir
+>> my_rocket = reference_rocket
 
 my_rocket = 
 
   struct with fields:
 
-                name: "Mjöllnir"
+                name: "reference_rocket"
          dont_record: [""    ""]
               models: {[@propulsion_model]  [@aerodynamics_model]  [@gravity_model]}
      state_variables: {["attitude"]  ["angular_momentum"]  ["position"]  ["velocity"]}
@@ -57,7 +58,7 @@ my_rocket =
             velocity: [3×1 double]
                 mass: 80
         length_scale: 4
-                mesh: "Assets/AM_00 Mjollnir Full CAD v79 low_poly 0.03.stl"
+                mesh: "Assets/AM_00 reference_rocket Full CAD v79 low_poly 0.03.stl"
         aerodynamics: [1×1 struct]
               engine: [1×1 struct]
 
@@ -238,7 +239,7 @@ rocket.my_parameter = zeros(3,1);
 rocket.derivative("my_parameter") = zeros(3,1);
 ```
 
-The dictionary-key is the parameter name as a string. For examples of this, see ``mjollnir.m`` or ``trallgok.m``.
+The dictionary-key is the parameter name as a string. For examples of this, see ``reference_rocket.m`` or ``trallgok.m``.
 
 Assigning something to this derivative, say in a model-script:
 

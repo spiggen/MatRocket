@@ -1,6 +1,6 @@
 # Creating and modelling rockets
 Author: Vilgot Lötberg, vilgotl@kth.se, 0725079097
-
+Upon finding issues or if you have questions, please call me.
 
 
 The below is documentation for the code found at: https://github.com/spiggen/MatRocket/tree/master

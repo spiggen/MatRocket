@@ -4,6 +4,8 @@ if exist("times", "var"); historian = query_historian(historian, historian, time
 
 File = fopen(filename, 'w');
 fclose(File);
+path_elements = split(filename, ["/", "//", "\", "\\"]);
+path = replace(filename, path_elements(end),"");
 
 write_branches("rocket", historian);
 
@@ -12,6 +14,9 @@ write_branches("rocket", historian);
         branch_names = fieldnames(branches);
         for branch_index = 1:numel(branch_names)
             branch_name = branch_names{branch_index};
+
+            if isequal(branch_name, "mesh"); copyfile(branches.(branch_name), path); end
+
             writematrix(trace+"."+branch_name, filename, "delimiter", ",", 'WriteMode','append');
 
             if     isequal(class(branches.(branch_name)), "struct"); write_branches(trace+"."+branch_name, branches.(branch_name));

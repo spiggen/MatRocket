@@ -1,4 +1,4 @@
-import bpy, mathutils, numpy, os, shutil
+import bpy, mathutils, numpy, os, shutil, time
 
 
 
@@ -100,9 +100,19 @@ def txt2obj(filepath, *args, **kwargs):
                 is_new_body  = not any(name == body_name for name in bpy.data.objects.keys())
 
                 if replace and not is_new_body:
+                    bpy.ops.object.select_all(action='DESELECT')
+                    print(body_name)
                     bpy.data.objects[body_name].select_set(True)
+                    children = bpy.data.objects[body_name].children
+                    parent   = bpy.data.objects[body_name].parent
                     bpy.ops.object.delete()
-                    is_new_body = True
+                    bpy.ops.object.empty_add(type='PLAIN_AXES', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
+                    body           = bpy.data.objects['Empty']
+                    body.name      = body_name
+                    for child in children:
+                        child.parent = body
+                    bpy.data.objects[body_name].parent = parent
+
 
                 if is_new_body:
                     bpy.ops.object.empty_add(type='PLAIN_AXES', align='WORLD', location=(0, 0, 0), scale=(1, 1, 1))
@@ -110,7 +120,7 @@ def txt2obj(filepath, *args, **kwargs):
                     body.name      = body_name
 
 
-                    
+
     
     # loop through to assign all the properties: ____________________________________________________
     for row in range(0, len(data)):

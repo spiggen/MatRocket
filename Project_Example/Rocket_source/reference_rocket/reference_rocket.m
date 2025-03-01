@@ -23,8 +23,6 @@ function rocket = reference_rocket()
     rocket.enviroment.temperature          = 282;
     rocket.enviroment.wind_velocity        = [0;0;0];
     
-    rocket.enviroment.dont_record          = ["",""];
-    rocket.enviroment.dont_record(end+1)   = "terrain";
     
     
     [rocket.enviroment.temperature_COESA, ~, rocket.enviroment.pressure, ~] = atmoscoesa(0);

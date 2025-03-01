@@ -36,7 +36,7 @@ sim = struct();
     initial_state_vector    = rocket2state_vector(rocket);
     [~, initial_rocket] = system_equations   (0, initial_state_vector, rocket); % [NOTE!] Due to recursion-structure, the rocket gotten out of ODE is not meant to be fed back into the ODE.
     % Solve ODE initial value problem.
-    t_range = 0:0.05:job.t_max;
+    t_range = [0, job.t_max];
     
     solution   = job.ode_solver( @(t,state_vector) system_equations(t,state_vector,rocket), t_range,  initial_state_vector);
     

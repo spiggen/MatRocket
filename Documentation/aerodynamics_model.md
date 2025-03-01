@@ -2,15 +2,11 @@
 
 Author: Vilgot Lötberg, vilgotl@kth.se, 0725079097
 
-The below code can be found at: https://github.com/aesirkth/AESIR-Mjollnir-Simulations
 
 <h2>Background</h2>
 
 
-![](../Data/tralljok16-Oct-2024/gifs/sim(1).gif)
-
-
-This paper will treat the modelling of the aerodynamic moments around a flying body 
+This article will treat the modelling of the aerodynamic moments around a flying body 
 using a tensor-based approach. The method described takes into account the geometry 
 of the body and the non-linearity of lifting moments distributed along its sides, 
 though it does not take into account any fluid-mechanics interaction between different 
@@ -28,7 +24,7 @@ It can also be seen as an unintentional study of polynomials.
 A common way to describe aerodynamic bodies is to use the 'center of pressure' -approach, 
 where all the aerodymamic forces are assumed to act from a single point on the body.
 
-![](center_of_pressure_combined.gif)
+![](lib/center_of_pressure_combined.gif)
 >*Fig 1: aerodynamic forces acting from center of pressure*
 
 While useful to get an overview of the bodys aerodynamic tendencies, such as whether 
@@ -47,7 +43,7 @@ the rockets rotation, it paints a different picture. Assuming no relative veloci
 looking only at the contribution from the body's own rotation, the velocity distribution 
 along its side becomes the following:
 
-![](velocity_distribution.gif)
+![](lib/velocity_distribution.gif)
 >*Fig 2: velocity distribution along broadside under pure rotation*
 
 Consider now the simplified equation of drag/lift as given by Nasa*:
@@ -64,8 +60,8 @@ $$ F = \frac{1}{2} \;\rho \; C_{d/l} \;A \; v^2 \; \text{sign}(v)$$
 
 Considering an infitesimal area segment along the bodys broadside:
 
-![](area_projected.png)
-![](area_element.png)
+![](lib/area_projected.png)
+![](lib/area_element.png)
 >*Fig 3: "infitesimal" area element*
 
 The force distributed along the broadside as
@@ -74,7 +70,7 @@ $$\begin{align}\partial F = \frac{1}{2} \;\rho \; C_{d/l} \;\partial A \; v^2 \;
 
 thus looks like this:
 
-![](force_distribution.gif)
+![](lib/force_distribution.gif)
 >*Fig 4: force distribution along broadside*
 
 This results in the total moment from all the $\partial F$ contributions being much larger 
@@ -96,7 +92,7 @@ $$\begin{align} M = \int_{R} r \partial F = \int_{R} r \frac{1}{2} C_d \rho v^2 
 
 Once again concidering a small area-element $\partial A$, it can be defined as:
 
-![](area_dimensions.png)
+![](lib/area_dimensions.png)
 > *Fig 5: parameterization of area-element*
 
 $$\begin{align}\partial A = b(r)\cdot \partial r \end{align}$$
@@ -148,14 +144,14 @@ bounds change as well. This makes it impossible (and thus impractical) to sepera
 
 Plotting part of the integrand $ (v_0 - \omega r)^2 sign(v_0 - \omega r) b(r) $ over $v$ reveals a way to approximate it:
 
-![](integrand.gif)
+![](lib/integrand.gif)
 > *Fig 6: integrand for different $v_0, \omega$*
 
 
 The shape of the curve is somewhat remeniscent of a cubic polynomial. The general shape of which 
 can be written as $ (v_0 - \omega \cdot r)^3$, in essence approximating $sign(v) = v$ to capture the odd nature of $sign(v)$:
 
-![](integrand_approximation.gif)
+![](lib/integrand_approximation.gif)
 > *Fig 7: integrand for different $v_0, \omega$*
 
 To make the polynomial into a good approximation, it's normalised with $ |v_0 - \omega \cdot r_{ref}| $ 
@@ -236,11 +232,11 @@ Further details about implementation follow after this section.
 
 Plotting each integrand-term individually:
 
-![](area_moment0.png)
-![](area_moment1.png)
-![](area_moment2.png)
-![](area_moment3.png)
-![](area_moment4.png)
+![](lib/area_moment0.png)
+![](lib/area_moment1.png)
+![](lib/area_moment2.png)
+![](lib/area_moment3.png)
+![](lib/area_moment4.png)
 > *Fig 8: A-terms*
 
 The integral of the above correspond to all the different area-moments of the body. The 0'th term, 

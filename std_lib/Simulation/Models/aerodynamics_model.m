@@ -43,9 +43,9 @@ function [component] = aerodynamics_model_internal(component)
     %% Drag:
     
    
-    drag_force = normalize(component.wind_velocity_absolute)*sum(component.aerodynamics.friction_coefficient.*component.aerodynamics.surface_area.*parallel_velocity_magnitude.^2)*air_density;
+    %component.aerodynamics.skin_drag = normalize(component.wind_velocity_absolute)*sum(component.aerodynamics.friction_coefficient.*component.aerodynamics.surface_area.*parallel_velocity_magnitude.^2)*air_density;
     
-    component.forces.DragForce = force((component.attitude')*drag_force, [0;0;0]);
+    %component.forces.DragForce = force((component.attitude')*drag_force, [0;0;0]);
    
     
     
@@ -83,41 +83,42 @@ function [component] = aerodynamics_model_internal(component)
     linear_velocity_components(:,:,3) =  relative_velocity_tensor.^1;
     linear_velocity_components(:,:,4) =  relative_velocity_tensor.^0;
     
-    crossproduct_tensor  = [ 0 -1  1;
-                             1  0 -1;
-                            -1  1  0];
+    crossproduct_tensor  =-[ 0  1 -1;
+                            -1  0  1;
+                             1 -1  0];
     
 
     
     
 
 
-    linear_coefficients        =    ones(1,1,4);
+    linear_coefficients        =   ones(1,1,4);
     linear_coefficients(1,1,1) =   1;
     linear_coefficients(1,1,2) =  -3;
     linear_coefficients(1,1,3) =   3;
     linear_coefficients(1,1,4) =  -1;
     
     
-    scaling_factor = 1./(abs(linear_velocity_components(:,:,3)) + abs(([1;1;1]*component.aerodynamics.length_scale').*linear_rotation_components(:,:,2)) + 10);
+    scaling_factor = 1./(abs( linear_velocity_components(:,:,3) - (component.aerodynamics.length_scale).*linear_rotation_components(:,:,2) ) + 1);
     
     
     
+    % Tensor-form of NASA's drag equation: https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/drag-equation/
+    lift_moment_tensor = sum(0.5 *air_density*component.aerodynamics.pressure_coefficient.*linear_rotation_components.*linear_velocity_components.*linear_coefficients.*component.aerodynamics.moment_of_area(:,:,2:5).*scaling_factor, 3).*crossproduct_tensor;
+    % Due to duplication of area in the area-tensor, this get's halved:
+    lift_force_tensor  = sum(0.5*air_density*component.aerodynamics.pressure_coefficient.*linear_rotation_components.*linear_velocity_components.*linear_coefficients.*component.aerodynamics.moment_of_area(:,:,1:4).*scaling_factor, 3);
     
-    lift_moment_tensor = sum(linear_rotation_components.*linear_velocity_components.*linear_coefficients.*component.aerodynamics.moment_of_area(:,:,2:5).*scaling_factor, 3).*crossproduct_tensor;
-    lift_force_tensor  = sum(linear_rotation_components.*linear_velocity_components.*linear_coefficients.*component.aerodynamics.moment_of_area(:,:,1:4).*scaling_factor, 3);
-    
-    lift_moment_vector = [lift_moment_tensor(3,2) + lift_moment_tensor(2,3);
-                          lift_moment_tensor(3,1) + lift_moment_tensor(1,3);
-                          lift_moment_tensor(1,2) + lift_moment_tensor(2,1)];
+    lift_moment_vector = [ lift_moment_tensor(3,2) + lift_moment_tensor(2,3);
+                           lift_moment_tensor(3,1) + lift_moment_tensor(1,3);
+                           lift_moment_tensor(1,2) + lift_moment_tensor(2,1)];
 
+    
     lift_force_vector  = lift_force_tensor * [1;1;1];
-    
-    
+
     
     component.moments.LiftMoment = moment(lift_moment_vector, [0;0;0]);
     component.forces.LiftForce   = force (lift_force_vector,  [0;0;0]);
-    
+    component.lift_force_tensor  = lift_force_tensor;
     
     end
     

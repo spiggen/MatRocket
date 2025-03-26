@@ -1,5 +1,6 @@
 ECHO OFF
 echo %0
+call pip install MatRocket
 curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -o miniconda.exe
 start /wait "" miniconda.exe
 del miniconda.exe

@@ -12,6 +12,7 @@ Upon finding issues or if you have questions, please call me.
 * **MatRocket installation**
 * **Project setup**
 * **Functionality & documentation**
+* **Changelog**
 
 ## MatRocket installation
 
@@ -124,3 +125,5 @@ Some text
 ![](https://github.com/spiggen/MatRocket/blob/master/Documentation/matrocket_simulation_structure.png)
 
 How MatRocket is structured.
+
+## Changelog

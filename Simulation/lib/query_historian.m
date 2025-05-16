@@ -19,9 +19,10 @@ try
                                         reshape(t_range, numel(t_range), 1), ...
                                         historian.(property_name), ...
                                         t ...
-                                       );
+                                        );
       
-catch
+catch me
+disp("query_historian.m Exception: "+property_name+" : "+string(me.message))
 end
 elseif isequal(class(historian.(property_name)), "string")
       instance.(property_name) = historian.(property_name);

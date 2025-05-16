@@ -169,7 +169,7 @@ $$\begin{align} (v_0-\omega r)^2\cdot sign(v_0-\omega r)b(r) \approx \frac{(v_0 
 \end{align}$$
 
 Where $r_{ref}$ is some reference-radius, which can be found impirically through testing and 
-plotting. The reference-radius used in this paper is $r_{ref} = 0.5\cdot r_{max}$, where $r_{max}$ 
+plotting. The reference-radius used in this article is $r_{ref} = 0.5\cdot r_{max}$, where $r_{max}$ 
 is the maximal radius on the body (in the case of the rocket above, the tip of the nosecone).
 
 <h3>Seperation of integral terms.</h3>

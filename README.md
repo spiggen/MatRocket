@@ -36,6 +36,7 @@ disp(library +" loaded successfully.")
 end
 
 ```
+A suggested use case would be to put this in a startup-script in MATLAB.
 
 
 ### Manual installation

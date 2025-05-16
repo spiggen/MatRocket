@@ -15,6 +15,29 @@ Upon finding issues or if you have questions, please call me.
 
 ## MatRocket installation
 
+### Automatic path and installation
+
+Below is provided a MATLAB-script that, if MatRocket is not installed, installs MatRocket, and adds the path:
+
+```MATLAB
+pip_libraries = {"MatRocket"};
+
+for index = 1:numel(pip_libraries)
+library = pip_libraries{index};
+[failiure, library_status] = system("pip show "+library);
+if failiure
+system("pip install "+library);
+[failiure, library_status] = system("pip show "+library);
+end
+
+library_path = strip(extractBetween(string(library_status), "Location: ", "Requires:"))+"\"+library;
+addpath(genpath(library_path));
+disp(library +" loaded successfully.")
+end
+
+```
+
+
 ### Manual installation
 MatRocket is installed via **pip**. In powershell, cmd or similar:
 
@@ -45,29 +68,13 @@ Requires: MatlabBlenderIO
 Required-by:
 ```
 
-
-
-### Automatic path and installation
-
-Below is provided a MATLAB-script that, if MatRocket is not installed, installs MatRocket, and adds the path:
+This path can then be added in MATLAB using addpath:
 
 ```MATLAB
-pip_libraries = {"MatRocket"};
-
-for index = 1:numel(pip_libraries)
-library = pip_libraries{index};
-[failiure, library_status] = system("pip show "+library);
-if failiure
-system("pip install "+library);
-[failiure, library_status] = system("pip show "+library);
-end
-
-library_path = strip(extractBetween(string(library_status), "Location: ", "Requires:"))+"\"+library;
-addpath(genpath(library_path));
-disp(library +" loaded successfully.")
-end
-
+addpath(genpath("C:\Users\jonas\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages"))
 ```
+
+
 
 
 

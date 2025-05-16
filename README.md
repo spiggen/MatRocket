@@ -2,7 +2,7 @@
 Author: Vilgot Lötberg, vilgotl@kth.se, 0725079097
 Upon finding issues or if you have questions, please call me.
 
-![](Documentation\MatRocket_logo_transparent.png)
+![](.\Documentation\MatRocket_logo_transparent.png)
 
 **NOTE!** This is the MatRocket source-code, but does not have to be downloaded for getting started with MatRocket. Proper installation of MatRocket is done via **pip**, follow the guide provided below.
 
@@ -113,6 +113,6 @@ Some text
 
 
 ### General Structure
-![](Documentation\MatRocket_simulation_structure.png)
+![](.\Documentation\MatRocket_simulation_structure.png)
 
 How MatRocket is structured.

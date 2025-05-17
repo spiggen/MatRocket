@@ -1,0 +1,41 @@
+MatRocket License (v1.0)
+========================
+
+Copyright (c) 2025 Vilgot Lötberg
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to use,
+copy, modify, and distribute the Software for non-commercial purposes,
+subject to the following conditions:
+
+1. Permitted Uses:
+   - This Software is intended for ground-based testing, simulation,
+     trajectory prediction, and educational/research purposes only.
+
+2. Prohibited Uses:
+   - The Software may not be used in any onboard system, live vehicle,
+     missile, drone, or any other autonomous or guided platform.
+   - The Software may not be used for military targeting, weapons
+     deployment, lethal autonomous systems, or any defense or weapons
+     applications beyond ground-based simulation.
+
+3. No Commercial Use:
+   - Commercial use is not permitted under this license. If you are
+     interested in commercial licensing, please contact the author.
+
+4. Export Control:
+   - You agree to comply with all applicable export laws and regulations.
+     You may not download or use this software if you are subject to embargo
+     or sanctions.
+
+5. Disclaimer and Liability:
+   - THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+     OR IMPLIED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM,
+     DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OR MISUSE OF THE
+     SOFTWARE.
+
+6. Attribution:
+   - This notice must be included in all copies or substantial portions of
+     the Software.
+
+For inquiries or commercial licensing, contact: vilgotl@kth.se

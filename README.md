@@ -97,10 +97,11 @@ https://github.com/spiggen/MatRocket-Single-Stage-Rocket-Example-
 
 ### Functions
 #### Models
-* `aerodynamics_model.m`
-* `equations_of_motion.m`
-* `gravity_model.m`
-* `propulsion_model.m`
+* `base_atmosphere_model.m`
+* `base_aerodynamics_model.m`
+* `base_equations_of_motion_model.m`
+* `base_gravity_model.m`
+* `base_propulsion_model.m`
 #### Utilities
 * `run_simulation.m`
 * `rocket2state_vector.m`

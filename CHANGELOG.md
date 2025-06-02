@@ -1,4 +1,4 @@
-## [0.10.16] - Unreleased
+## [0.10.16]
 
 ### Changed
 * **Now supports custom atmospheric models** `aerodynamics_model.m` now gets `pressure`, `temperature`, `density`, `wind_velocity` from `rocket.enviroment`, instead of querying them from [`atmoscoesa`](https://se.mathworks.com/help/aerotbx/ug/atmoscoesa.html) itself. If properties are not present under `rocket.enviroment`, it queries them in the old way, for backwards compatibility. This is to allow for custom atmospheric models, if one wants to use balloon data, satellite data, or change the medium all together if working with submersibles for example.

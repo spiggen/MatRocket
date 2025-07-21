@@ -22,6 +22,15 @@
 **[NOTE!] THE ABOVE ARE NOT BACKWARDS COMPATIBLE! Sorry for the inconvenience. To fix bring code up to date, include `base_atmosphere_model` in `rocket.models`. See README -> Functionality & Documentation for suggested order of models**.
 
 
+## [0.10.17]
+
+### Added
+- **rocket = base_UI_loading_bar(rocket)**, UI model. Previously the loading-bar interfered with multithreading. Now, loading-bar is available as a model, allowing users to choose whether they want it or not.
+
+### Changed
+- **rocket = base_atmosphere_model(rocket)**, fixed bug. Should now be working properly.
+
+
 ## [0.11.0] - Unreleased
 
 ### Changed

@@ -20,21 +20,17 @@ if ~isfield (job, "t_max");      job.t_max        = 80;                         
 if ~isfield (job, "ode_solver"); job.ode_solver   = @ode45;                     end
 
 
-
-sim = struct();
     
 
     %% Simulation:
 
     tic
 
-    evalin  ("base", "loading_message = 'Simulating:';");
-    evalin  ("base", "loading_bar = waitbar(0, loading_message);");
-    evalin  ("base", "loading_bar_end_time =" + string(job.t_max) + ";");
+
     disp    ("Simulating...")
     
-    initial_state_vector    = rocket2state_vector(rocket);
-    [~, initial_rocket] = system_equations   (0, initial_state_vector, rocket); % [NOTE!] Due to recursion-structure, the rocket gotten out of ODE is not meant to be fed back into the ODE.
+    initial_state_vector = rocket2state_vector(rocket);
+    [~, initial_rocket]  = system_equations(0, initial_state_vector, rocket); % [NOTE!] Due to recursion-structure, the rocket gotten out of ODE is not meant to be fed back into the ODE.
     % Solve ODE initial value problem.
     t_range = [0, job.t_max];
     
@@ -42,8 +38,7 @@ sim = struct();
     
     job.simulation_time = toc;
     job.simulated = true;
-    evalin("base","close(loading_bar);");
-    evalin("base", "clear('loading_bar_end_time', 'loading_message');");
+
     disp  ("Simulating/Done.")
 
 
@@ -51,9 +46,6 @@ sim = struct();
 
     %% Post-processing:
         
-    evalin  ("base", "loading_message = 'Post-processing :';");
-    evalin  ("base", "loading_bar = waitbar(0, loading_message);");
-    evalin  ("base", "loading_bar_end_time =" + job.t_max + ";");
     disp    ("Post-processing...")
 
 
@@ -68,11 +60,10 @@ sim = struct();
     end
 
     post_processing_time = toc;
-    evalin("base","close(loading_bar);");
-    evalin("base", "clear('loading_bar_end_time', 'loading_message')");
+    
     disp  ("Post-processing/Done.")
 
-    save(genpath("./latest_sim.mat"), "sim", "job");
+    save(genpath("./latest_sim.mat"), "rocket_historian", "job");
 
 
 

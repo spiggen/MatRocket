@@ -1,0 +1,15 @@
+function rocket = base_UI_loading_bar(rocket)
+
+persistent init
+persistent loading_bar
+persistent fig
+
+if isempty(init)
+fig = figure();
+loading_bar = uiprogressdlg(fig, "Icon", "..\Documentation\MatRocket_logo_transparent.png", "Title","MatRocket Simulation", "ShowPercentage","on");
+init = false;
+end
+
+loading_bar.Message = "Simulated time: T + "+str(rocket.t) + " s";
+loading_bar.Value   = div(rocket.t, 1)
+end

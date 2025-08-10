@@ -8,8 +8,9 @@ function rocket = base_equations_of_motion_model(rocket)
 
     rocket.wind_velocity_absolute = rocket.atmosphere.wind_velocity - rocket.velocity;
     
-    rocket.rotation_rate = (rocket.attitude*rocket.rigid_body.moment_of_inertia*(rocket.attitude'))\rocket.angular_momentum; 
-    
+    rocket.rotation_rate          = (rocket.attitude*rocket.rigid_body.moment_of_inertia*(rocket.attitude'))\rocket.angular_momentum; 
+    rocket.rotation_rate_absolute = rocket.rotation_rate;
+
     rotation_rate_tensor = [  0                       -rocket.rotation_rate(3)        rocket.rotation_rate(2);
                               rocket.rotation_rate(3)  0                             -rocket.rotation_rate(1);
                              -rocket.rotation_rate(2)  rocket.rotation_rate(1)        0                      ];

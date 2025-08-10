@@ -98,17 +98,20 @@ https://github.com/spiggen/MatRocket-Single-Stage-Rocket-Example-
 ### Functions
 #### Models
 * `base_atmosphere_model.m`
+* `base_atmosphere_from_dataset_model.m`
 * `base_aerodynamics_model.m`
 * `base_equations_of_motion_model.m`
 * `base_gravity_model.m`
 * `base_propulsion_model.m`
+* `base_UI_loading_bar.m`
 #### Utilities
 * `run_simulation.m`
+* `simulation_logger.m`
+* `query_historian.m`
+* `realtime_ode.m`
 * `rocket2state_vector.m`
 * `state_vector2rocket.m`
 * `derivative2rocket.m`
-* `create_historian.m`
-* `record_history.m`
 * `flatten.m`
 * `system_equations.m`
 * `mesh2aerodynamics.m`
@@ -120,6 +123,7 @@ https://github.com/spiggen/MatRocket-Single-Stage-Rocket-Example-
 * `normalize.m`
 * `orthonormalize.m`
 * `vector2orthonormal_basis.m`
+* `random_wind_dataset.m`
 
 
 ## Models
@@ -171,6 +175,36 @@ This model queries MATLAB's [atmoscoesa](https://se.mathworks.com/help/aerotbx/u
 
 ---
 
+
+
+### `base_atmosphere_from_dataset_model.m`
+```matlab
+rocket = base_atmosphere_from_dataset_model(rocket)
+```
+Introduced in MatRocket 0.10.18
+
+**Recursive:** No  
+**File:** `Simulations/Models/base_atmosphere_from_dataset_model.m`
+
+#### Inputs (all in parent’s basis):
+* `rocket.position` | 3x1 Double
+* `rocket.atmosphere.dataset` | string | Either the url to a valid dataset-csv file download page, or the filepath to a dataset-csv file.
+
+#### Major outputs:
+* `rocket.atmosphere.pressure` | Double | Atmospheric pressure
+* `rocket.atmosphere.temperature` | Double | Atmospheric temperature
+* `rocket.atmosphere.density` | Double | Atmospheric density
+* `rocket.atmosphere.speed_of_sound` | Double | Atmospheric speed of sound
+* `rocket.atmosphere.wind_velocity` | 3x1 Double | Atmospheric wind velocity
+
+This model uses a dataset from a weather balloon or similar to calculate the atmospheric conditions. For an example of where to get data, see: https://weather.uwyo.edu/upperair/sounding.shtml
+
+For formatting of the data pointed to by the url/csv the `rocket.atmosphere.dataset`, see: https://weather.uwyo.edu/wsgi/sounding?datetime=2018-12-20%2009:00:00&id=02185&src=UNKNOWN&type=TEXT:CSV 
+
+To get random data (for example, for monte-carlo style simulations), see the helper-function `random_wind_dataset`.
+
+
+---
 
 
 
@@ -296,6 +330,216 @@ rocket = base_propulsion_model(rocket)
 ## Utilities
 
 
+### `run_simulation.m`
+
+```matlab
+[historian, job] = run_simulation(rocket, job)
+```
+**File:** `Simulations/run_simulation.m`
+
+#### Inputs:
+* `rocket` | struct 
+* `job` | struct | contains fields with options for how the simulation is to be run, for example the simulation time, ode-solver, etc.
+
+#### Outputs:
+* `historian` | struct | a carbon copy of the rocket, but with an extra dimension for each parameter pertaining to the time-steps taken during simulation. See `simulation_logger.m`
+* `job` | struct | same as input, but with additional fields pertaining to how the simulation was executed, for example elapsed simulaiton time
+
+
+
+A shorthand/wrapper for the MATLAB ODE-solvers. By default, `run_simulation` uses MATLAB's [`ode_45`](https://se.mathworks.com/help/matlab/ref/ode45.html). For realtime ode-solving, see MatRocket's `realtime_ode.m`. 
+
+To change out the ode-solver, assign `job.ode_solver` with the function handle to the ode-solver of your choise:
+
+```matlab
+job.ode_solver = @ode23t;
+```
+
+[See MATLAB's ode-solvers](https://se.mathworks.com/help/matlab/math/choose-an-ode-solver.html).
+
+
+To change the simulation-time, assign `job.t_max`:
+
+```matlab
+job.t_max = 300 %[s];
+```
+
+---
+
+### `simulation_logger.m`
+
+```matlab
+% Simulation-logging-mode:
+simulation_logger(rocket);
+
+% Query/extraction-mode:
+historian = simulation_logger();
+
+```
+**File:** `Simulations/lib/simulation_logger.m`
+
+#### Inputs:
+* `rocket` | struct 
+
+#### Outputs:
+* `historian` | struct | a carbon copy of the rocket, but with an extra dimension for each parameter pertaining to the time-steps taken during simulation
+
+
+`simulation_logger` is meant to run in two different modes depending on if it's in the simulation loop or not. It is the main simulation logger, and keeps track of the simulation state by using persistent variables. That way, when the ode-solver is done and the simulation scope is cleaned up by MATLAB, the simulation_logger scope is still untouched, allowing us to extract the simulation data. It is primarily used by `run_simulation.m`.
+
+The `historian`-struct is a copy of the `rocket`-struct, but with one extra dimension for each double/logical type property. This extra dimension contains said property over every single timestep, and is a log of how it changes over the course of the simulation. For example:
+
+```matlab
+>> rocket
+
+rocket = 
+
+  struct with fields:
+
+             is_body: 1
+            position: [3×1 double]
+            attitude: [3×3 double]
+                mesh: ".\Rocket_source\rocket.stl"
+              engine: [1×1 struct]
+              models: {1×10 cell}
+          derivative: [4×1 containers.Map]
+          enviroment: [1×1 struct]
+          atmosphere: [1×1 struct]
+          rigid_body: [1×1 struct]
+    angular_momentum: [3×1 double]
+       rotation_rate: [3×1 double]
+            velocity: [3×1 double]
+        aerodynamics: [1×1 struct]
+               chute: [1×1 struct]
+                tank: [1×1 struct]
+
+```
+
+```matlab
+
+>> historian
+
+historian = 
+
+  struct with fields:
+
+                          is_body: [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 … ] (1×6001 double)
+                         position: [3×1×6001 double]
+                         attitude: [3×3×6001 double]
+                             mesh: ".\Rocket_source\rocket.stl"
+                           engine: [1×1 struct]
+                       enviroment: [1×1 struct]
+                       atmosphere: [1×1 struct]
+                       rigid_body: [1×1 struct]
+                 angular_momentum: [3×1×6001 double]
+                    rotation_rate: [3×1×6001 double]
+                         velocity: [3×1×6001 double]
+                     aerodynamics: [1×1 struct]
+                            chute: [1×1 struct]
+                             tank: [1×1 struct]
+                                t: [0 0.0167 0.0333 0.0500 0.0667 0.0833 0.1000 0.1167 0.1333 0.1500 0.1667 0.1833 0.2000 0.2167 … ] (1×6001 double)
+           wind_velocity_absolute: [3×1×6001 double]
+                             mass: [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 … ] (1×6001 double)
+           rotation_rate_absolute: [3×1×6001 double]
+                           forces: [1×1 struct]
+                          moments: [1×1 struct]
+         assigned_body_parameters: [1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 … ] (1×6001 double)
+          center_of_mass_absolute: [3×1×6001 double]
+                    mass_absolute: [68 67.9700 67.9400 67.9100 67.8800 67.8500 67.8200 67.7900 67.7600 67.7300 67.7000 67.6700 … ] (1×6001 double)
+                   force_absolute: [1×1 struct]
+                  moment_absolute: [1×1 struct]
+                     acceleration: [3×1×6001 double]
+    rotation_rate_component_basis: [3×1×6001 double]
+                lift_force_tensor: [3×3×6001 double]
+
+```
+
+(In the above case the historian contains extra parameters, since it also contains parameters assigned during the simulation, whereas the `rocket` only contains the initial conditions).
+
+**[NOTE!]** If querying `simulation_logger` directly, remember to clear `simulation_logger` before starting a new simulation, otherwise it will still contain the old simulation data and try to append the new simulation data to the old. To do this, run:
+
+```matlab
+clear simulation_logger
+```
+
+---
+
+### `query_historian.m`
+
+```matlab
+% Query at single timestep
+rocket = query_historian(historian, t)
+% Query at multiple timesteps
+historian = query_historian(historian, t)
+```
+
+**File:** `Simulations/lib/query_historian.m`
+
+
+#### Inputs:
+* `historian` | struct | see `simulation_logger.m`
+* `t` | 1x1 double OR 1xN double | time at which historian is to be queried
+
+#### Outputs:
+* `rocket` | struct | if `t` is a 1x1 double
+* `historian` | struct | if `t` is a 1xN double, see `simulation_logger.m`
+
+
+`query_historian` is a helper function that, given a time or a range of times `t`, interpolates `historian` and returns a  `rocket`/`historian` at that given time or range of times. This is especially useful for animation, as MATLAB's ode-solvers don't take a constant timestep, but instead vary the timestep. By using `query_historian`, we can interpolate it at a range of times that is linearly spaced to get a fixed framerate. 
+
+
+---
+
+### `realtime_ode.m`
+
+```matlab
+solution = realtime_ode(dvdt, t_span, v_init)
+```
+
+**File:** `Simulations/lib/realtime_ode.m`
+
+#### Inputs:
+* `dvdt` | function_handle | ordinary differential equation to be solved on the form: `dvdt = @(t,v) ...`
+* `t_span` | 1x2 double | simulation time-span
+* `t_v_init` | Nx1 double | initial value of state vector, where N is the number of elements in the state vector
+
+#### Outputs:
+* `solution` | struct | struct with two fields: 
+    * `solution.x` | 1xM | timesteps taken during simulation, where M is the number of timesteps
+    * `solution.y` | NxM | state-vector values during simulation, where M is the number of timesteps, and N is the number of elements in the state vector
+
+
+`realtime_ode` is written on the same form as the standard MATLAB ode-solvers, see [MATLAB's documentation](https://se.mathworks.com/help/matlab/math/choose-an-ode-solver.html). `realtime_ode` is a second-order Adam-Bashworth ODE-solver, that clocks the time it takes to run the simulation computations, and uses that as it's actual timstep stepsize. This way, simulation time is kept in sync with realtime. This is especially important for hardware-in-the-loop simulations, as realtime systems can only run in real time, and thus the simulation has to keep in sync with the hardware.
+
+
+---
+
+### `random_wind_dataset.m`
+
+```matlab
+url = random_wind_dataset(station_number, start_date, end_date)
+```
+**File:** `Simulations/lib/random_wind_dataset.m`
+
+
+### Inputs:
+* `station_number` | string | station number of the station you want to query wind data from
+* `start_date` | datetime | start-date on the interval you want to find wind-data
+* `end_date` | datetime | end-date on the interval you want to find wind-data
+ 
+
+### Outputs:
+* `url` | string | url to a valid wind-dataset
+
+
+`random_wind_dataset` looks for a random wind dataset on the web in between the start date and end date provided, and, once it finds one that is valid, returns the download-url as a string. The data is provided by the university of wyoming: https://weather.uwyo.edu/upperair/sounding.shtml
+
+For formatting of the data pointed to by the url, see: https://weather.uwyo.edu/wsgi/sounding?datetime=2018-12-20%2009:00:00&id=02185&src=UNKNOWN&type=TEXT:CSV 
+
+
+---
+
+
 ### `mesh2aerodynamics.m`
 
 ```matlab
@@ -321,6 +565,11 @@ component = propulsion_model(component)
 
 See:  
 [Detailed technical explanation](https://github.com/spiggen/MatRocket/blob/master/Documentation/aerodynamics_model.md)
+
+
+
+
+
 
 
 ## General Structure

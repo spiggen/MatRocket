@@ -1,0 +1,5 @@
+function historian = trim_historian(historian)
+
+
+
+end

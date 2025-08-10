@@ -54,7 +54,7 @@ if isfield(component, 'mesh')
     else;             view(temp_ax, 0,90); drawnow; dimension2image_hash = ["width" "height"  "NA"   ];
     end
     
-    shadow = getframe(temp_ax);
+    shadow = getframe(temp_fig);
     shadow.cdata = flipud(shadow.cdata);
     %imagesc(shadow.cdata); drawnow; pause(10)
     

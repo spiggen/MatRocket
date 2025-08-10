@@ -2,6 +2,16 @@ function rocket = base_aerodynamics_model(rocket)
 % This model doesn't use the center-of-pressure, it instead relies on the first, second
 % third and fourth moments of area of the components broadsides to calculate the moment induced upon the component
 % due to the relative wind.
+    
+persistent init
+
+if isempty(init)
+
+    
+    
+    init = false;
+end
+
 
 
 

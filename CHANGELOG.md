@@ -5,7 +5,7 @@
 
 
 ### Added
-- **rocket = base_atmosphere_model(rocket)**, model. Basic atmospheric model using [`atmoscoesa`](https://se.mathworks.com/help/aerotbx/ug/atmoscoesa.html).
+- **base_atmosphere_model.m**, model. Basic atmospheric model using [`atmoscoesa`](https://se.mathworks.com/help/aerotbx/ug/atmoscoesa.html).
 
 ### Renamed
 
@@ -25,10 +25,31 @@
 ## [0.10.17]
 
 ### Added
-- **rocket = base_UI_loading_bar(rocket)**, UI model. Previously the loading-bar interfered with multithreading. Now, loading-bar is available as a model, allowing users to choose whether they want it or not.
+- **base_UI_loading_bar.m**, UI model. Previously the loading-bar interfered with multithreading. Now, loading-bar is available as a model, allowing users to choose whether they want it or not.
 
 ### Changed
-- **rocket = base_atmosphere_model(rocket)**, fixed bug. Should now be working properly.
+- **base_atmosphere_model.m**, fixed bug. Should now be working properly.
+
+
+## [0.10.18]
+
+### Added
+- **base_atmosphere_from_dataset_model.m**, allows for reading atmoshperic data from weather-balloons via the web or a csv-file. See README
+- **random_wind_dataset.m**, checks the web and selects a random dataset. See README
+- **simulation_logger.m**, logs the simulation during the simulation loop, removing the need for post-processing, making hardware-in-the-loop a lot more practical
+- **realtime_ode.m**, a realtime ode-solver based on the Adam-Bashworth method, to solve ode-equations in real time. Primarily useful for hardware-in-the-loop simulation
+
+
+### Changed
+- **mesh2aerodynamics.m**, fixed bug that made it only work on some computers, pertaining to how MATLAB's getframe works. Should now be more stable
+- **base_equations_of_motion_model.m**, fixed bug, rotation_rate_absolute was set to zero, which propagated down to downstream rotating components as well
+
+### Removed
+- **create_historian.m**, This is now handled by the simulation_logger
+- **record_history.m**, This is now handled by the simulation_logger
+
+
+
 
 
 ## [0.11.0] - Unreleased

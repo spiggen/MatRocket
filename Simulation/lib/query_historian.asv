@@ -23,7 +23,7 @@ try
       
 catch ME
     warning("skipped "+property_name+" when querying historian.")
-    disp(ME.message)
+    disp(ME.)
 end
 elseif isequal(class(historian.(property_name)), "string")
       instance.(property_name) = historian.(property_name);
